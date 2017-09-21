@@ -9,7 +9,8 @@
       "username": "{{ user `UPCLOUD_USERNAME` }}",
       "password": "{{ user `UPCLOUD_PASSWORD` }}",
       "zone": "nl-ams1",
-      "storage_uuid": "01000000-0000-4000-8000-000030060200"
+      "storage_uuid": "01000000-0000-4000-8000-000020030100",
+      "template_prefix": "gitlab"
     }
   ],
   "provisioners": [
@@ -18,7 +19,32 @@
       "inline": [
         "apt-get update",
         "apt-get upgrade -y",
+        "apt-get install -y curl openssh-server ca-certificates nginx",
+        "mkdir -p /etc/nginx/ssl",
+        "curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash",
+        "apt-get install gitlab-ce",
+        "openssl genrsa -out /etc/nginx/ssl/gitlab.key 4096 && openssl req -x509 -new -nodes -key /etc/nginx/ssl/gitlab.key -out /etc/nginx/ssl/gitlab.crt -days 3650 -subj '/CN=gitlab.kontenademo.io'",
+        "gitlab-ctl reconfigure",
         "echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4BoEvD7Bb3Lgeitm9rf6F3o6wqBWPlNY/5unTyX2lZsowD6QaJqb9DVsX043V85SpsuT+VL7wZ7crUcMJWxlzfPd5Ccol04gDKOFtPUjiibKMRh4i2Q7qIieShv6mNN50Tl58XiDxYzLLHmh05C8/VRG2+2iOBtCxxD2SNfAkmOc12fFhuY3iNNimGE0B1MRnxLJBtyVQq/v3KlriFyjzV13aKh2zuIzHM11hnWt0mw32Atb2v9ysPl+WOhI3AULKiWl+sWh9F2G7TcU1K+EXyO9+TQEpaHEYnnmOFpVfY0xWJkJsnROnpYrK70D1XxSEDdiuOHHVvCQnb9Su1avX juhaniatula@Juhanis-MacBook-Pro.local' | tee /root/.ssh/authorized_keys"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "gitlab",
+      "destination": "/etc/nginx/sites-available/gitlab"
+    },
+    {
+      "type": "file",
+      "source": "gitlab.rb",
+      "destination": "/etc/gitlab/gitlab.rb"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "rm /etc/nginx/sites-enabled/default",
+        "ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab",
+        "systemctl restart nginx",
+        "gitlab-ctl reconfigure"
       ]
     }
   ]

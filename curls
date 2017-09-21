@@ -1,0 +1,29 @@
+curl -XGET --user ${USERN} https://api.upcloud.com/1.2/server
+
+curl -XGET --user ${USERN} https://api.upcloud.com/1.2/storage/template
+
+curl -XPOST --user ${USERN} -H "Content-Type:application/json" -d \
+'{
+  "server": {
+    "zone": "nl-ams1",
+    "title": "gitlab",
+    "hostname": "gitlab",
+    "plan": "4xCPU-4GB",
+    "storage_devices": {
+      "storage_device": [
+        {
+          "action": "clone",
+          "storage": "018aec2d-5c2d-4560-b5fd-35cfb3a3ae99",
+          "title": "gitlab--template-1505932125",
+          "size": 30,
+          "tier": "maxiops"
+        }
+      ]
+    }
+  }
+}' \
+https://api.upcloud.com/1.2/server
+
+curl -XPOST --user ${USERN} https://api.upcloud.com/1.2/server/00652a81-9145-4bf5-9050-61c857bf65da/stop
+
+curl -XDELETE --user ${USERN} https://api.upcloud.com/1.2/server/curl -XPOST --user ${USERN} https://api.upcloud.com/1.2/server/00652a81-9145-4bf5-9050-61c857bf65da
