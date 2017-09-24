@@ -1,0 +1,24 @@
+stack: 2048
+version: 0.1.1
+description: 2048 Demo 
+services:
+  app:
+    image: alexwhen/docker-2048
+    instances: 1
+    links:
+      - loadbalancer/lb
+    environment:
+      - KONTENA_LB_INTERNAL_PORT=80
+      - KONTENA_LB_CUSTOM_SETTINGS=redirect scheme https if !{ ssl_fc }
+    secrets:
+      - secret: KONTENA_LB_VIRTUAL_HOSTS_2048
+        name: KONTENA_LB_VIRTUAL_HOSTS_SECRET
+        type: env
+    deploy:
+      strategy: ha
+      wait_for_port: 80
+    hooks:
+      post_start:
+        - name: sleep
+          cmd: sleep 10
+          instances: 1

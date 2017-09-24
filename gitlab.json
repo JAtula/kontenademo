@@ -24,8 +24,7 @@
         "curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash",
         "apt-get install gitlab-ce",
         "openssl genrsa -out /etc/nginx/ssl/gitlab.key 4096 && openssl req -x509 -new -nodes -key /etc/nginx/ssl/gitlab.key -out /etc/nginx/ssl/gitlab.crt -days 3650 -subj '/CN=gitlab.kontenademo.io'",
-        "gitlab-ctl reconfigure",
-        "echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC0hxCorUiqjkhh2vOL43NCUsNgLCT3lFSc2LdNjuF0Zk8sjzWrgB/tab00k/e6+LHUyc+TBd0tm+mvi1PnJ1Jg64wXElHLKtCCAMxPol9nK2Q4aIVQaEP/S57Viae4KoOMiYE7TwMTT8tt+rzICi45UIZ8B6dOmR+edGsQ2cQNJczsUCqvGKgbG+0dLIuui00J+SB4GKRsU1ELLQRtIenIo5FZ5rNIvWH8DVnsa5fliTFok6Q6gsYhI+BMi9eU+0vyH0v+iHQNtqUrBtJILCzQMbNV1u3PkwW56Fyx9oiPZEAT/UzNzxZ1vVXXpxGD4mWTZBJxQQzc8Uh7jWHE2k9j6dTloR7SCcL5nRdYa/3Ok9uPu0FfxROUI5pEdKnsp4axAe80NBwuu6vwRjiPKrw2YW2QE49BOQNR4TY8ON/9i3tmUZI3fXRyg2D/Lt8RKd+E7FJUQ0GtwivWazc6nex8YIvJnXvZrb+A0ke86F0GuFfveK14D+mJv2HChLioAb9v7psoVmCxX9gk4pgvmMZJKcfhA6teDXixT6aiT7110KbmB6D58H47Cft/RF0wmKBdzbltwRQTe5bxdBjdCcIGhRXsd9si8xGUxmgj9J7vmWtsbsNVw42wcgwziZdAWYHof8UVyv8WbcqpIZuhdhxBMwQ8AJMXDFIuMCLaFVqFWQ== juhaniatula@gmail.com' | tee /root/.ssh/authorized_keys"
+        "echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC0hxCorUiqjkhh2vOL43NCUsNgLCT3lFSc2LdNjuF0Zk8sjzWrgB/tab00k/e6+LHUyc+TBd0tm+mvi1PnJ1Jg64wXElHLKtCCAMxPol9nK2Q4aIVQaEP/S57Viae4KoOMiYE7TwMTT8tt+rzICi45UIZ8B6dOmR+edGsQ2cQNJczsUCqvGKgbG+0dLIuui00J+SB4GKRsU1ELLQRtIenIo5FZ5rNIvWH8DVnsa5fliTFok6Q6gsYhI+BMi9eU+0vyH0v+iHQNtqUrBtJILCzQMbNV1u3PkwW56Fyx9oiPZEAT/UzNzxZ1vVXXpxGD4mWTZBJxQQzc8Uh7jWHE2k9j6dTloR7SCcL5nRdYa/3Ok9uPu0FfxROUI5pEdKnsp4axAe80NBwuu6vwRjiPKrw2YW2QE49BOQNR4TY8ON/9i3tmUZI3fXRyg2D/Lt8RKd+E7FJUQ0GtwivWazc6nex8YIvJnXvZrb+A0ke86F0GuFfveK14D+mJv2HChLioAb9v7psoVmCxX9gk4pgvmMZJKcfhA6teDXixT6aiT7110KbmB6D58H47Cft/RF0wmKBdzbltwRQTe5bxdBjdCcIGhRXsd9si8xGUxmgj9J7vmWtsbsNVw42wcgwziZdAWYHof8UVyv8WbcqpIZuhdhxBMwQ8AJMXDFIuMCLaFVqFWQ== juhaniatula@gmail.com' | tee -a /root/.ssh/authorized_keys"
       ]
     },
     {
@@ -43,7 +42,6 @@
       "inline": [
         "rm /etc/nginx/sites-enabled/default",
         "ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab",
-        "systemctl restart nginx",
         "gitlab-ctl reconfigure"
       ]
     }

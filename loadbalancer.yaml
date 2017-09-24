@@ -1,7 +1,7 @@
 stack: loadbalancer
 version: 1.0.0
 description: Load balancer 
-expose: loadbalancer
+expose: lb
 variables:
   lb_node:
     type: string
@@ -9,10 +9,9 @@ variables:
     from:
       prompt: Node for LB
 services:
-  loadbalancer:
+  lb:
     image: kontena/lb:latest
     ports:
       - 80:80
-      - 443:443
     affinity:
       - node=={{ lb_node }}
