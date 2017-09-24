@@ -1,0 +1,28 @@
+stack: hyperspace
+version: 0.1.1
+description: Hyperspace Demo 
+expose: loadbalancer
+services:
+  loadbalancer:
+    image: kontena/lb:latest
+    ports:
+      - 80:80
+  app:
+    image: jatula/hyperspace:0.1
+    instances: 3
+    links:
+      - loadbalancer
+    environment:
+      - KONTENA_LB_INTERNAL_PORT=9393
+    secrets:
+      - secret: KONTENA_LB_VIRTUAL_HOSTS_SECRET
+        name: KONTENA_LB_VIRTUAL_HOSTS
+        type: env
+    deploy:
+      strategy: ha
+      wait_for_port: 9393
+    hooks:
+      post_start:
+        - name: sleep
+          cmd: sleep 10
+          instances: 3

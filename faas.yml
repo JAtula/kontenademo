@@ -1,0 +1,46 @@
+stack: kontena-faas
+version: 0.0.1
+services:
+  gateway:
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+    image: functions/gateway:0.6.6-beta
+    links: loadbalancer/loadbalancer
+    environment:
+      - dnsrr=true  # Temporarily use dnsrr in place of VIP while issue persists on PWD
+      - KONTENA_LB_INTERNAL_PORT=8080
+      - KONTENA_LB_VIRTUAL_HOSTS=faas.kontenademo.io
+  prometheus:
+    image: functions/prometheus:latest  # autobuild from Dockerfile in repo.
+    command: "-config.file=/etc/prometheus/prometheus.yml -storage.local.path=/prometheus -storage.local.memory-chunks=10000 --alertmanager.url=http://alertmanager:9093"
+    stateful: true
+    links:
+      - loadbalancer/loadbalancer
+      - gateway
+    environment:
+      - no_proxy=gateway
+      - KONTENA_LB_INTERNAL_PORT=9090
+      - KONTENA_LB_VIRTUAL_HOSTS=prom.kontenademo.io
+  alertmanager:
+    image: functions/alertmanager:latest    # autobuild from Dockerfile in repo.
+    links: 
+      - gateway
+      - prometheus
+    environment:
+      - no_proxy=gateway
+    command: '-config.file=/alertmanager.yml'
+# Functions to deploy   
+  nodeinfo:
+    image: functions/nodeinfo:latest
+    links:
+      - gateway
+    environment:
+      - no_proxy=gateway
+      - https_proxy=$https_proxy
+  hubstats:
+    image: functions/hubstats:latest 
+    links:
+      - gateway
+    environment:
+      - no_proxy=gateway
+      - https_proxy=$https_proxy
