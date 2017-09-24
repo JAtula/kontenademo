@@ -1,5 +1,7 @@
 # KontenaDemo
-09/26/17 demo for running hyperspace on Kontena. 
+09/26/17 demo for running hyperspace on Kontena.
+
+Check out the slide stack [here](https://docs.google.com/presentation/d/1JkeIa-eTu_AiudtCpmY0QR8KPvnxBOrIgmraOyXYYmw/edit?usp=sharing).
 
 ## Development environment
 
