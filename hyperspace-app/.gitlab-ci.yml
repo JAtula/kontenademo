@@ -24,7 +24,7 @@ build-docker-image:
   after_script:
     - sudo docker rmi $IMAGE_PREFIX/$IMAGE_NAME:$IMAGE_TAG
   tags:
-    - docker
+    - kontena
 
 trigger_jenkins_deploy_job_to_prod:
   stage: trigger_deploy_prod
@@ -33,4 +33,4 @@ trigger_jenkins_deploy_job_to_prod:
     - sleep 60
     - source checkup.sh
   tags:
-    - docker
+    - kontena

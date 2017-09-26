@@ -117,11 +117,11 @@ Tail the load balancer log, to see that the backend comes live.
 
 As the Hyperspace game doesn't work well with https, we'll deploy the 2048 game as a substitute. First, we'll create a new domain secret that it reflects the new game. 
 
-`kontena vault update KONTENA_LB_VIRTUAL_HOSTS_2048 2048.kontenademo.io`
+`kontena vault write KONTENA_LB_VIRTUAL_HOSTS_2048 2048.kontenademo.io`
 
 And update our hosts file for the appropriate domain.
 
-`echo '94.237.41.37 2048.kontenademo.io' |sudo tee -a /etc/hosts`
+`echo '<lb address> 2048.kontenademo.io' |sudo tee -a /etc/hosts`
 
 The new stack file for the 2048 is mostly similar to the Hyperspace stack file, but with the custom load balancer settings environment variable that force HTTP traffic to HTTPS.
 
@@ -132,6 +132,20 @@ The new stack file for the 2048 is mostly similar to the Hyperspace stack file, 
 ```
 
 Both games are up and our load balancer is routing traffic beatifully. <3
+
+**Let's go a little bit further...**
+
+One thing that might intress us at some point would be to login to HAProxy portal and check that backends are doing okay. Even though we see that from the logs also. 
+
+The out-of-the-box VPN that comes with Kontena is meant for stuff like this. Connecting to internal services straight from your laptop. Let's give it a go.
+
+Firstly, we'll provision the OpenVPN server `kontena vpn create`. Wait for a while and when it's finished, download the config file to you OpenVPN client of choice.
+
+`kontena vpn config > kontena.ovpn`
+
+Now use the generated configuration with your OpenVPN client and log in to HAProxy statistic portal by using its internal IP and port 1000. Default username and password are: `stats:secret`.
+
+If you scale a service now and watch the stats portal, you'll see the the scaled backend expanding in numbers.
 
 ### GitLab
 
@@ -168,13 +182,47 @@ https://api.upcloud.com/1.2/server
 ```
 3. From the output, copy the public IP and edit your hosts file again. As I already had the URL for GitLab in my hosts file, I'll substitute the address to the current one.
 
-`sudo sed -i -e 's/.*gitlab.kontenademo.io/94.237.41.17 gitlab.kontenademo.io/g' /etc/hosts`
+`sudo sed -i -e 's/.*gitlab.kontenademo.io/<lb ip> gitlab.kontenademo.io/g' /etc/hosts`
 
 4. Open up the URL in a browser and go through the initial GitLab installation.
 
+### GitLab CI
+
+The speed up the development process, where going to add a GitLab runner to act as a CI slave and push new commits as Docker images to Docker Hub and to our Kontena cluster. Lastly it'll check that the current version is running and exit.
+
+To start, provision the runner instance the same way you did the GitLab instance *but* take notice of the variables: 
+
+```
+{
+    "variables": {
+      "UPCLOUD_USERNAME": "{{ env `UPCLOUD_API_USER` }}",
+      "UPCLOUD_PASSWORD": "{{ env `UPCLOUD_API_PASSWORD` }}",
+      "gitlab-address": "<fill in>",
+      "gitlab-token": "<fill in>",
+      "kontena-master-address": "<fill in>"
+
+    },
+```
+
+When the GitLab runner is up and alive, you should register the runner in GitLabs settings and assign the tag "kontena" to it appropriately. I won't go too deep in how you setup the runner. Checkout GitLabs [docs](https://docs.gitlab.com/runner/) for more information.
+
+Next, we'll create the CI file. GitLab looks a the root folder of every branch for a `gitlab-ci.yml` file, and if sees one, It'll use it to construct the CI/CD pipeline for that branch.
+
+We'll be using only master branch, and our CI configuration won't be that fancy either. Something quick'n'dirty to make the job done! 
+
+You can check it out under `hyperspace-app/gitlab-ci.yml`. 
+
+Now, when ever a commit is pushed to the master branch:
+
+1. A Docker image is build with an updated image tag and pushed to Docker Hub.
+2. That image is the used to update the Kontena stack deployment of the Hyperspace app.
+3. A small validation is runned against the live stack to verify that the image has updated. 
+
+
+
 ### CleanUP
 
-Now, when you're done playing. Let's remove demo environment.
+When you're done playing. Let's remove demo environment.
 
 `kontena stack rm --force <stack name>`
 `kontena upcloud node terminate --force <node name>`

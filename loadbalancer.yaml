@@ -13,5 +13,10 @@ services:
     image: kontena/lb:latest
     ports:
       - 80:80
+      - 443:443
     affinity:
       - node=={{ lb_node }}
+    secrets:
+      - secret: SSL_CERT
+        name: SSL_CERTS
+        type: env
