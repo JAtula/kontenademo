@@ -15,7 +15,7 @@ curl -XPOST --user ${USERN} -H "Content-Type:application/json" -d \
       "storage_device": [
         {
           "action": "clone",
-          "storage": "01d4287a-9913-4e75-91dc-6ed0d70300ba",
+          "storage": "01b56a2e-1adf-4028-925f-a5aed1d939fd",
           "title": "gitlab--template-1505932125",
           "size": 30,
           "tier": "maxiops"
@@ -34,4 +34,4 @@ curl -XDELETE --user ${USERN} https://api.upcloud.com/1.2/server/000da17c-3487-4
 
 curl -XGET --user ${USERN} https://api.upcloud.com/1.2/storage/template
 
-curl -XDELETE --user ${USERN} https://api.upcloud.com/1.2/storage/01d4fcd4-e446-433b-8a9c-551a1284952e
+curl -XDELETE --user ${USERN} https://api.upcloud.com/1.2/storage/01dc5c92-763e-4de2-827b-56359f3be4e7

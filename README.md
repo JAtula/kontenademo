@@ -121,7 +121,7 @@ As the Hyperspace game doesn't work well with https, we'll deploy the 2048 game 
 
 And update our hosts file for the appropriate domain.
 
-`echo '94.237.41.37 hyperspace.kontenademo.io' |sudo tee -a /etc/hosts`
+`echo '94.237.41.37 2048.kontenademo.io' |sudo tee -a /etc/hosts`
 
 The new stack file for the 2048 is mostly similar to the Hyperspace stack file, but with the custom load balancer settings environment variable that force HTTP traffic to HTTPS.
 

@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -XPUT -k -v $SERVICE_ENDPOINT -H "Authorization: Bearer $KONTENA_TOKEN" -H "Accept: application/json" -H "Content-Type: application/json" -d '{ "image":"jatula/hyperspace:'$IMAGE_TAG'" }'

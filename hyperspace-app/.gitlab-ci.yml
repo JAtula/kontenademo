@@ -1,0 +1,36 @@
+# Following variables need to be configured in Project "CI/CD Pipelines" settings:
+# REGISTRY_USERNAME - docker registry username
+# REGISTRY_PASSWORD - docker registry password
+# KONTENA_TOKEN - access token to Kontena API
+
+
+variables:
+  IMAGE_PREFIX: "jatula"
+  IMAGE_TAG: $CI_PIPELINE_ID
+  IMAGE_NAME: "hyperspace"
+  SERVICE_ENDPOINT: https://kontena-master/v1/services/demogrid/hyperspace/game
+  STACK_ENDPOINT: https://kontena-master/v1/stacks/demogrid/hyperspace
+
+stages:
+  - build-docker
+  - trigger_deploy_prod
+
+build-docker-image:
+  stage: build-docker
+  script:
+    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD 
+    - docker build --pull -t $IMAGE_PREFIX/$IMAGE_NAME:$IMAGE_TAG .
+    - docker push $IMAGE_PREFIX/$IMAGE_NAME:$IMAGE_TAG
+  after_script:
+    - sudo docker rmi $IMAGE_PREFIX/$IMAGE_NAME:$IMAGE_TAG
+  tags:
+    - docker
+
+trigger_jenkins_deploy_job_to_prod:
+  stage: trigger_deploy_prod
+  script:
+    - source update.sh
+    - sleep 60
+    - source checkup.sh
+  tags:
+    - docker

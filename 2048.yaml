@@ -12,7 +12,7 @@ services:
       - KONTENA_LB_CUSTOM_SETTINGS=redirect scheme https if !{ ssl_fc }
     secrets:
       - secret: KONTENA_LB_VIRTUAL_HOSTS_2048
-        name: KONTENA_LB_VIRTUAL_HOSTS_SECRET
+        name: KONTENA_LB_VIRTUAL_HOSTS
         type: env
     deploy:
       strategy: ha
